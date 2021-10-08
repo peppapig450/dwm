@@ -207,6 +207,7 @@ static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void spawn(const Arg *arg);
+static void runstartup(void);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
@@ -1654,6 +1655,13 @@ spawn(const Arg *arg)
 }
 
 void
+runstartup(void)
+{
+  char *cmd = "$HOME/.dotfiles/scripts/startup.sh &";
+  system(cmd);
+}
+
+void
 tag(const Arg *arg)
 {
 	if (selmon->sel && arg->ui & TAGMASK) {
@@ -2145,6 +2153,7 @@ main(int argc, char *argv[])
 		die("pledge");
 #endif /* __OpenBSD__ */
 	scan();
+        runstartup();
 	run();
 	cleanup();
 	XCloseDisplay(dpy);
