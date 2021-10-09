@@ -92,7 +92,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, CenterThisWindow;
 	Client *next;
 	Client *snext;
 	Monitor *mon;
@@ -138,6 +138,7 @@ typedef struct {
 	const char *title;
 	unsigned int tags;
 	int isfloating;
+	int CenterThisWindow;
 	int monitor;
 } Rule;
 
@@ -290,6 +291,7 @@ applyrules(Client *c)
 
 	/* rule matching */
 	c->isfloating = 0;
+        c->CenterThisWindow = 0;
 	c->tags = 0;
 	XGetClassHint(dpy, c->win, &ch);
 	class    = ch.res_class ? ch.res_class : broken;
@@ -302,6 +304,7 @@ applyrules(Client *c)
 		&& (!r->instance || strstr(instance, r->instance)))
 		{
 			c->isfloating = r->isfloating;
+			c->CenterThisWindow = r->CenterThisWindow;
 			c->tags |= r->tags;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
 			if (m)
@@ -1296,9 +1299,19 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	} else {
 		/* Remove border and gap if layout is monocle or only one client */
 		if (selmon->lt[selmon->sellt]->arrange == monocle || n == 1) {
-			gapoffset = 0;
-			gapincr = -2 * borderpx;
-			wc.border_width = 0;
+			/* gapoffset = 0; */
+			/* gapincr = -2 * borderpx; */
+			/* wc.border_width = 0; */
+                        if (c->CenterThisWindow) {
+                          wc.border_width = borderpx;
+                          gapoffset = 0;
+                          gapincr = -2 * borderpx;
+                        }
+                        else {
+                          wc.border_width = 0;
+                          gapoffset = gappx;
+		      	  gapincr = 2 * gappx;
+                        } 
 		} else {
 			gapoffset = gappx;
 			gapincr = 2 * gappx;
@@ -1734,6 +1747,13 @@ tile(Monitor *m)
 			if (ty + HEIGHT(c) < m->wh)
 				ty += HEIGHT(c);
 		}
+
+	if (n == 1 && selmon->sel->CenterThisWindow)
+        resizeclient(selmon->sel,
+                (selmon->mw - selmon->mw * 0.7) / 2,
+                (selmon->mh - selmon->mh * 0.7) / 2,
+                selmon->mw * 0.7,
+                selmon->mh * 0.7);
 }
 
 void
@@ -2181,8 +2201,8 @@ main(int argc, char *argv[])
 	if (pledge("stdio rpath proc exec", NULL) == -1)
 		die("pledge");
 #endif /* __OpenBSD__ */
-	scan();
         runstartup();
+        scan();
 	run();
 	cleanup();
 	XCloseDisplay(dpy);
