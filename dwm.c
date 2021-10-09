@@ -237,6 +237,8 @@ static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 
 /* variables */
+static const char *scriptsdir = "$HOME/.dotfiles/scripts/";
+static const char *startupsh = "startup.sh";
 static const char broken[] = "broken";
 static char stext[256];
 static int screen;
@@ -1657,7 +1659,10 @@ spawn(const Arg *arg)
 void
 runstartup(void)
 {
-  char *cmd = "$HOME/.dotfiles/scripts/startup.sh &";
+  char cmd[100] = "";
+  strcat(cmd, scriptsdir);
+  strcat(cmd, startupsh);
+  strcat(cmd, " &");
   system(cmd);
 }
 
