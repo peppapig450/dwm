@@ -6,23 +6,22 @@ static const unsigned int gappx     = 30;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int usealtbar          = 1;        /* 1 means use non-dwm status bar */
-static const int barheight          = 20;
-static const char *fonts[]          = { "monospace:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
+static const int barheight          = 15;
+static const char *fonts[]          = { "CaskaydiaCove Nerd Font Mono:size=16" };
 static const char col_gray1[]       = "#2E3440";
 static const char col_gray2[]       = "#4C566A";
 static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
+static const char col_gray4[]       = "#D8DEE9";
+static const char col_gray5[]       = "#3B4252";
 static const char col_cyan[]        = "#81A1C1";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_gray1,  col_cyan  },
+	[SchemeSel]  = { col_gray4, col_gray5,  col_cyan  },
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "", "", "", "4", "5", "6", "7", "8", "ﭮ" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -32,7 +31,7 @@ static const Rule rules[] = {
 	/* class      	     instance    title    tags mask     isfloating   CenterThisWindow?     monitor */
 	{ "kitty",           NULL,       NULL,    0,            0,     	     1,		           -1 },
 	{ "Gimp",            NULL,       NULL,    0,            1,           0,                    -1 },
-	{ "Firefox",         NULL,       NULL,    1 << 8,       0,           0,                    -1 },
+	{ "firefox",         NULL,       NULL,    1 << 2,       0,           0,                    -1 },
         { "discord",         NULL,       NULL,    1 << 8,       0,           1,                    -1 },
         { "Polybar",         NULL,       NULL,    0,            1,           1,                    -1 },
 };
@@ -54,24 +53,19 @@ static const Layout layouts[] = {
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
+	{ MODKEY|ShiftMask,             KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask,           KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-/* required for some reason idk */
-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "rofi", "-show", "drun", NULL };
-
-/* stuff i actually use */
-static const char rofi_drun_cmd[100] = "$HOME/.dotfiles/scripts/rofi_drun.sh";
-static const char rofi_window_cmd[100] = "$HOME/.dotfiles/scripts/rofi_window.sh";
-static const char rofi_powermenu_cmd[100] = "$HOME/.dotfiles/scripts/rofi_powermenu.sh";
+static const char rofi_drun_cmd[] = "$HOME/.dotfiles/scripts/rofi_drun.sh";
+static const char rofi_window_cmd[] = "$HOME/.dotfiles/scripts/rofi_window.sh";
+static const char rofi_powermenu_cmd[] = "$HOME/.dotfiles/scripts/rofi_powermenu.sh";
 static const char *termcmd[]  = { "kitty", NULL };
-static const char *webcmd[]  = { "qutebrowser", NULL };
+static const char *webcmd[]  = { "firefox", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */

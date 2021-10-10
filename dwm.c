@@ -1681,8 +1681,6 @@ sigchld(int unused)
 void
 spawn(const Arg *arg)
 {
-	if (arg->v == dmenucmd)
-		dmenumon[0] = '0' + selmon->num;
 	if (fork() == 0) {
 		if (dpy)
 			close(ConnectionNumber(dpy));
@@ -1701,6 +1699,7 @@ runstartup(void)
   strcat(cmd, scriptsdir);
   strcat(cmd, startupsh);
   strcat(cmd, " &");
+  system((char *) "dwmblocks &");
   system(cmd);
 }
 
